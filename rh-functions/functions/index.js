@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const config = require("./utility/config");
-const serviceAccount = require("./utility/service");
+const config = require("./utilitys/config");
+const serviceAccount = require("./utilitys/service");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
