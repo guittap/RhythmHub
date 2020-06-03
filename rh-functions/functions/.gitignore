@@ -1,4 +1,5 @@
 node_modules/
-utilitys/
+utility/config.js
+utility/service.js
 
 

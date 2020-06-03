@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const config = require("./utilitys/config");
-const serviceAccount = require("./utilitys/service");
+const config = require("./utility/config");
+const serviceAccount = require("./utility/service");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -22,6 +22,7 @@ app.get("/posts", (req, res) => {
   admin
     .firestore()
     .collection("posts")
+    .orderBy("createdAt", "desc")
     .get()
     .then((data) => {
       let posts = [];
@@ -42,7 +43,7 @@ app.post("/post", (req, res) => {
   const newPost = {
     body: req.body.body,
     userHandle: req.body.userHandle,
-    createdAt: admin.firestore.Timestamp.fromDate(new Date()),
+    createdAt: new Date().toISOString(),
   };
 
   admin
