@@ -18,10 +18,12 @@ admin.initializeApp({
 const express = require("express");
 const app = express();
 
+const firebase = require("firebase");
+firebase.initializeApp(config);
+const db = admin.firestore();
+
 app.get("/posts", (req, res) => {
-  admin
-    .firestore()
-    .collection("posts")
+  db.collection("posts")
     .orderBy("createdAt", "desc")
     .get()
     .then((data) => {
@@ -46,9 +48,7 @@ app.post("/post", (req, res) => {
     createdAt: new Date().toISOString(),
   };
 
-  admin
-    .firestore()
-    .collection("posts")
+  db.collection("posts")
     .add(newPost)
     .then((doc) => {
       return res.json({ message: `document ${doc.id} created successfully` });
@@ -56,6 +56,31 @@ app.post("/post", (req, res) => {
     .catch((err) => {
       res.status(500).json({ error: "something went wrong" });
       console.error(err);
+    });
+});
+
+// signup route
+app.post("/signup", (req, res) => {
+  const newUser = {
+    email: req.body.email,
+    password: req.body.password,
+    confirmPassword: req.body.confirmPassword,
+    handle: req.body.handle,
+  };
+
+  // TODO: validate data
+
+  firebase
+    .auth()
+    .createUserWithEmailAndPassword(newUser.email, newUser.password)
+    .then((data) => {
+      return res
+        .status(201)
+        .json({ message: `user ${data.user.uid} siged up successfully` });
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({ error: err.code });
     });
 });
 
